@@ -1,13 +1,8 @@
-% Define the directory path
-dirpath = 'data';
-
-% List all files in the directory
 set1files = {'data\DSCF4177.jpg', 'data\DSCF4178.jpg', 'data\DSCF4179.jpg',...
             'data\DSCF4180.jpg','data\DSCF4186.jpg', 'data\DSCF4187.jpg'};
 set1fileMasks = {'data\DSCF4177Mask.jpg', 'data\DSCF4178Mask.jpg', 'data\DSCF4179Mask.jpg', ...
             'data\DSCF4180Mask.jpg','data\DSCF4186Mask.jpg', 'data\DSCF4187Mask.jpg'};
 
-% Loop over the filenames and filter out those containing "MASK"
 images = {};
 masks = {};
 
@@ -17,6 +12,7 @@ for i = 1:numel(set1files)
     masks{i} = imbinarize(imread(set1fileMasks{i}), 0.5);
 end
 
+% PART 1status
 for i=1:numel(images)-1
     image1 = images{i};
     mask1 = masks{i};
@@ -24,29 +20,38 @@ for i=1:numel(images)-1
     mask2 = masks{i+1};
 
     %compute SIFT features
-    [f1, d1] = vl_sift(image1);
-    [f2, d2] = vl_sift(image2);
+    [frames1, descriptors1] = vl_sift(image1);
+    [frames2, descriptors2] = vl_sift(image2);
 
     % compute matches
-    [matches, scores] = vl_ubcmatch(d1, d2);
+    [matches, scores] = vl_ubcmatch(descriptors1, descriptors2);
     
     % sort matches based on the associated scores
-    [scores_sorted,idx_in_orig] = sort(scores);
-    scores_sorted
+    [scores_sorted, idx_in_orig] = sort(scores);
     matches_sorted = matches(:, idx_in_orig);
     
     % get all frames from f1 and f2 that are associated with a match
     matches1 = matches(1,:);
     matches2 = matches(2,:);
-    f1_matches = f1(:,matches1);
-    f2_matches = f2(:,matches2);
+    f1_matches = frames1(:,matches1);
+    f2_matches = frames2(:,matches2);
 
-    % find all possible pixels that lie on a frame
-    for i = 1:size(f1)
-    valid_frames, valid_descriptors = find_valids(f2,d2,mask2);
+    % TODO: find all possible pixels that lie on a frame
+
+    %       need to find all pixels that lie on each frame
+    %       centered at (x,y), with radius r
+    %       pixel_indices_within_range returns the top left and bottom
+    %       right position of the square that contains the given circle for
+    %       a frame. We need to get this box that contians the frame, then
+    %       check in each(? not sure about this part) mask for both images
+    %       to see if any of the pixels in the box contain a part of the
+    %       feature described by the frame.
+
+    %       need to look further at the documentation for the vlfeat
+    %       package...
 end
 
-function (top, left), (bottom, right) = pixel_indices_within_range_of_frame(frame, s)
+function [top, left, bottom, right] = pixel_indices_within_range_of_frame(frame, s)
     row = frame(1);
     col = frame(2);
     rad = frame(3);
