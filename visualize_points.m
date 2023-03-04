@@ -8,11 +8,12 @@
 % You do not need to modify anything in this function, although you can if
 % you want to.
 
-function [] = visualize_points( Actual_Pts, Project_Pts)
+function [] = visualize_points( residual, Actual_Pts, Project_Pts)
     figure(11)
     plot(Actual_Pts(:,1),Actual_Pts(:,2),'ro');
     hold on
     plot(Project_Pts(:,1),Project_Pts(:,2),'+');
     legend('Actual Points','Projected Points');
+    title(['residual is: ' num2str(residual)]);
     hold off
 end
