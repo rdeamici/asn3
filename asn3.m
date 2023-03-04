@@ -6,38 +6,42 @@ U=[];
 S=[];
 V=[];
 C=[];
-[U, S, V, C] = find_c(P,Pc1_4177);
-U
-S
-V
-C
+C = find_c(P,Pc1_4177);
+disp('camera calibration matrix:')
+disp(C)
 
-% A_inv = V*inv(S)*U';
+[Projected_2D_Pts, Residual] = evaluate_points( C, Pc1_4177, P);
+fprintf('\nThe total residual is: <%.4f>\n\n',Residual);
 
-img = im2gray(imread('data\DSCF4177.jpg'));
-size(img)
-% C*vertcat(P(1,:)', 1)
+visualize_points(Pc1_4177,Projected_2D_Pts);
 
-function [lsv,sv,rsv,calibration] = find_c(P,Pc1)
+function calibration = find_c(P,Pc1)
+    % convert 6x2 matrix into 12x1 single column matrix
+    b = reshape(Pc1',[],1);
+    
     % Build the linear system
     A = [];
     for i = 1:size(P,1)
         X = P(i,1);
         Y = P(i,2);
         Z = P(i,3);
-        
         u = Pc1(i,1);
         v = Pc1(i,2);
         A = [A; X, Y, Z, 1, 0, 0, 0, 0, -u*X, -u*Y, -u*Z;
-                 0, 0, 0, 0, X, Y, Z, 1, -v*X, -v*Y, -v*Z];
+                0, 0, 0, 0, X, Y, Z, 1, -v*X, -v*Y, -v*Z];
     end
-    
+    A
     % Solve for the camera calibration matrix
-    [lsv,sv,rsv] = svd(A);
-    c = rsv(:,end);
-    calibration = [c(1) c(2)  c(3)   c(4);
-                   c(5) c(6)  c(7)   c(8);
-                   c(9) c(10) c(11)  1];
+    % formula is A*x = b, where 
+    % A is system of linear equations
+    % x is unknown matrix
+    % b is input 2D points
+    C = A\b;
+    C = [C;1];
+    calibration = reshape(C,[],3)
+    size(calibration)
+    calibration = calibration'
+    size(calibration)
 end
 
 % PART 1
