@@ -30,6 +30,7 @@ function [frames_on_object1, frames_on_object2] = part1(image1, image2, mask1, m
     % remove SIFT features which are not on the object
     f1_mask = mask1(sub2ind(size(mask1), round(f1_matches(2,:)), round(f1_matches(1,:))));
     frames_on_object1 = f1_matches(:,f1_mask);
+    
     f2_mask = mask2(sub2ind(size(mask2), round(f2_matches(2,:)), round(f2_matches(1,:))));
     frames_on_object2 = f2_matches(:,f2_mask);
 

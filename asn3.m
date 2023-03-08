@@ -12,27 +12,14 @@ addpath('code');
     sift_features2 = sift_features(2,:);
 
     [frames_on_1, frames_on_2] = part1(images{1}, images{2}, masks{1}, masks{2}, sift_features1, sift_features2);
-    C1 = find_c(P_4177,Pc1_4177);
-    % compute the RQ decomposition of C1
-    M = C1(:,1:3);
-    C4 = C1(:,4);
-
-    [Q, R] = rq(M);
-    T = compute_T(M,C4);
-    % compute the reconstructed matrix C1
-    C1_recon = [Q*R Q*R*T];
-
-    % print the results
-    %disp('Matrix C1:');
-    %disp(C1);
-    %disp('Matrix R:');
-    %disp(R);
-    %disp('Matrix Q:');
-    %disp(Q);
-    %disp('Matrix T:');
-    %disp(T);
-    %disp('Reconstructed matrix C:');
-    %disp(C1_recon);
+    whos Pc1_4177
+    Pc1_4177
+    whos P_set1
+    P_set1
+    C1 = find_c(P_set1,Pc1_4177);
+    
+    verbose = 1; % change to 0 to turn off debug printing
+    [M, Q, R, T] = decompose_c(C1, verbose);
     % Pcs and Ps needs to be defined in 'constants.m'
     % calibration_matrices = part2(set1files, Pcs, Ps);
     % C1 = calibration_matrices{1};

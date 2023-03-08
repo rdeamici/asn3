@@ -2,10 +2,13 @@
 % epipolar line l2 = Fp1
 % epipolar line l1 = trans(F)p2
 function [features_on_epipole1, features_on_epipole2] = part3(F, s, image1, image2, features_on_1, features_on_2)
-    length(features_on_1)
+    whos features_on_1
+    whos features_on_2
     features_on_epipole1 = [];
     features_on_epipole2 = [];
-    for i = 1:size(features_on_1,2)
+    lines_on_2 = [];
+    points_on_1 = [];
+    for i = 1:size(features_on_2,2)
         feat1 = features_on_1(:,i);
         feat2 = features_on_2(:,i);
         
@@ -16,7 +19,7 @@ function [features_on_epipole1, features_on_epipole2] = part3(F, s, image1, imag
         x2 = feat2(1);
         y2 = feat2(2);
         p2 = [x2;y2;1];
-
+        
         [l1,l2] = epipolar_lines(F,p1,p2);
         
         % Convert the epipolar lines to slope-intercept form
@@ -34,17 +37,8 @@ function [features_on_epipole1, features_on_epipole2] = part3(F, s, image1, imag
         y1 = m1 * x + b1;
         y2 = m2 * x + b2;
         
-        % Draw the epipolar lines on top of the image
-        if i == 1
-            figure, imshow(image1);
-            hold on;
-            line(x, y1, 'Color', 'r');
-            hold off;
-            figure, imshow(image2);
-            hold on;
-            line(x, y2, 'Color', 'g');
-            hold off;
-        end
+        points_on_1 = [points_on_1; p1'];
+        lines_on_2 = [lines_on_2; y2];
 
         thresh = .015;
         dist1 = abs(p2'*F*p1);
@@ -60,5 +54,24 @@ function [features_on_epipole1, features_on_epipole2] = part3(F, s, image1, imag
             features_on_epipole1 = [features_on_epipole1 feat1]; 
             features_on_epipole2 = [features_on_epipole2 feat2]; 
         end
-
+    end        % Draw the epipolar lines on top of the image
+    
+    whos points_on_1
+    whos lines_on_2
+    figure, imshow(image1);
+    hold on;
+    for i = 1:size(points_on_1,1)
+        x = points_on_1(i,1);
+        y = points_on_1(i,2);
+        plot(x, y, 'r.', 'MarkerSize',10);
+    end
+    hold off;
+    figure, imshow(image2);
+    hold on;
+    for i = 1:size(lines_on_2,1)
+        x = lines_on_2(i, 1)
+        y = lines_on_2(i, 2:end);
+        line(x, y, 'Color', 'g');
+    end
+    hold off;
 end
