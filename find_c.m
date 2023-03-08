@@ -1,3 +1,4 @@
+%
 function calibration = find_c(P,Pc1)
     % convert nx2 matrix into 2nx1 single column matrix
     b = reshape(Pc1',[],1);
@@ -17,6 +18,8 @@ function calibration = find_c(P,Pc1)
     % A is system of linear equations
     % x is unknown matrix
     % b is input 2D points
+    size(A)
+    size(b)
     C = A\b;
     C = [C;1]; % C(3,4) = 1
     % convert C from 12x1 to a 3x4 matrix
