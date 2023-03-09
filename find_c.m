@@ -1,7 +1,7 @@
 %
-function calibration = find_c(P,Pc1)
+function calibration = find_c(P,Pc)
     % convert nx2 matrix into 2nx1 single column matrix
-    b = reshape(Pc1',[],1);
+    b = reshape(Pc',[],1);
     
     % Build the linear system
     A = [];
@@ -9,17 +9,15 @@ function calibration = find_c(P,Pc1)
         X = P(i,1);
         Y = P(i,2);
         Z = P(i,3);
-        u = Pc1(i,1);
-        v = Pc1(i,2);
+        u = Pc(i,1);
+        v = Pc(i,2);
         A = [A; X, Y, Z, 1, 0, 0, 0, 0, -u*X, -u*Y, -u*Z;
                 0, 0, 0, 0, X, Y, Z, 1, -v*X, -v*Y, -v*Z];
     end
     % formula is A*x = b, where 
-    % A is system of linear equations
+    % A is system of linear equations coeffecients
     % x is unknown matrix
     % b is input 2D points
-    size(A)
-    size(b)
     C = A\b;
     C = [C;1]; % C(3,4) = 1
     % convert C from 12x1 to a 3x4 matrix

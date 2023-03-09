@@ -9,7 +9,7 @@
 % you want to.
 
 function [] = visualize_points( residual, Actual_Pts, Project_Pts)
-    figure(11)
+    figure;
     plot(Actual_Pts(:,1),Actual_Pts(:,2),'ro');
     hold on
     plot(Project_Pts(:,1),Project_Pts(:,2),'+');
