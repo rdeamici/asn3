@@ -35,7 +35,7 @@ for sf_idx = 1: 2
     
     calibration_matrices = part2(setFiles, Pcs, P_set, verbose);
     
-    frames_pairs = part3(images, setFiles, Pc_homogs, matching_pairs, s);
+    frames_pairs = part3(images, setFiles, Pc_homogs, matching_pairs, s, sf_idx);
     
     for i = 1:size(calibration_matrices,2)
         [M,Q,R,T] = decompose_c(calibration_matrices{i},verbose);

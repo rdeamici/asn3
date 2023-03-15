@@ -1,4 +1,4 @@
-function [features_on_epipole1, features_on_epipole2] = find_features_on_poles(s, f1, f2, fundMat, e1, e2, image1, image2, imFilename1, imFilename2)
+function [features_on_epipole1, features_on_epipole2] = find_features_on_poles(s, f1, f2, fundMat, e1, e2, image1, image2, imFilename1, imFilename2, setNum)
     features_on_epipole1 = [];
     features_on_epipole2 = [];
     lines_on_2 = [];
@@ -6,7 +6,12 @@ function [features_on_epipole1, features_on_epipole2] = find_features_on_poles(s
     distances = [];
     % Define the range of x-coordinates
     x = 1:s(2);
-    
+    thresh = 0.35;
+    if setNum == 2
+        thresh = 0.15;
+    end
+    thresh
+        
     for i = 1:size(f1,2)
         feat1 = f1(:,i);
         p1 = [feat1(1);feat1(2);1];
@@ -17,7 +22,6 @@ function [features_on_epipole1, features_on_epipole2] = find_features_on_poles(s
         [l1,l2] = epipolar_lines(p1, e1, p2, e2);
         
         % determine if p2 lies on epipolar line l1
-        thresh = 0.35;
         dist1 = abs(p2'*fundMat*p1);
         if dist1 < thresh
             % Convert the epipolar lines to slope-intercept form
