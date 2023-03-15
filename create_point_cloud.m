@@ -1,39 +1,20 @@
 % Solve for many 3D points P by using many Cs and many Pcs
-function point_cloud = create_point_cloud(Cs, sift_features, images, masks, setNum)
+function point_cloud = create_point_cloud(Cs, frames_pairs, images)
+    % pairs: 
+    % (im1,im2), (im1,im3), (im1,im4),
+    %            (im2,im3), (im2,im4),
+    %                       (im3,im4)
     point_cloud = [];
-    sift1 = sift_features(1, :);
-    frames1 = sift1{1};
-    img1 = images{1};
-    mask1 = masks{1};
-    % get all matching frames for each image
-    matching_frames = {frames1};
-    smallest = 500;
-    for i = 2:size(Cs,2)
-        img2 = images{i};
-        mask2 = masks{i};
-        sift2 = sift_features(i,:);
-        % img1 mask1 will always be the first image in the list aka 4177
-        % that way all the matching features should match to the same
-        % 3D points in the real world
-        [frames_on_1, frames_on_2] = part1(img1, img2, mask1, mask2, sift1, sift2, setNum);
-%         whos frames_on_1
-%         whos frames_on_2
-        matching_frames{end+1} = frames_on_2;
-        smallest = min([smallest, size(frames_on_2,2)]);
-    end
-    whos smallest
-    for i = 1:smallest % for each frame
-        disp(i)
-        points2d = [];
-        for idx = 1:size(matching_frames,2) % grab each images corresponding frames
-            curFrames = matching_frames{idx};
-            curFrame = curFrames(:,i);
-            u = curFrame(1);
-            v = curFrame(2);
-            points2d = [points2d; [u,v]];
+    match_idx = 1;
+    for i = 1:size(Cs,2)-1
+        C1 = Cs{i};
+        for j = i+1:size(Cs,2)
+            C2 = Cs{j};
+            frames1 = frames_pairs{match_idx,1};
+            frames2 = frames_pairs{match_idx,2};
+            pt_cloud = estimate_depth(frames1, C1, frames2, C2);
+            point_cloud = [point_cloud; pt_cloud];
+            match_idx = match_idx + 1;
         end
-        % now we have all 2d points that match to same 3d point
-        [X,Y,Z,W] = estimate_depth(points2d, Cs);
-        point_cloud = [point_cloud; [X,Y,Z,W]];
     end
 end

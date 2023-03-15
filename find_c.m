@@ -1,4 +1,3 @@
-%
 function calibration = find_c(P,Pc)
     % convert nx2 matrix into 2nx1 single column matrix
     b = reshape(Pc',[],1);

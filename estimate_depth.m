@@ -15,29 +15,45 @@
 % therefore, b must also have 2n rows.
 % multiplying a 2nx4 matrix by a 4x1 matrix
 % will yield a 2nx1 matrix
-function [X,Y,Z,W] = estimate_depth(points2d, Cs)
+function threeDpts = estimate_depth(f1_matched,C1, f2_matched,C2)
 %     whos points2d
 %     whos Cs
+    threeDpts = [];
     A = [];
-    b = reshape(points2d',[],1);
-    for i = 1:size(Cs,2)
-        C = Cs{i};
-        r1 = C(1,:);
-        r2 = C(2,:);
-        r3 = C(3,:);
-        
-        point = points2d(i,:);
-        u = point(1);
-        v = point(2);
+    r11 = C1(1,:);
+    r21 = C1(2,:);
+    r31 = C1(3,:);
+    r12 = C2(1,:);
+    r22 = C2(2,:);
+    r32 = C2(3,:);
 
-        row1 = u*r3 - r1;
-        row2 = v*r3 - r2;
-        A = [A;row1;row2];
+    for i = 1:size(f1_matched,2)
+        u1 = f1_matched(1,i);
+        v1 = f1_matched(2,i);
+        u2 = f2_matched(1,i);
+        v2 = f2_matched(2,i);
+        
+        % derived from left camera
+        row1 = u1*r31 - r11;
+        row2 = v1*r31 - r21;
+
+        % derived from right camera
+        row3 = u2*r32 - r12;
+        row4 = v2*r32 - r22;
+        A = [row1;row2;row3;row4];
+        b = [u1;v1;u2;v2];
+        pt3d = A\b;
+        
+        X = pt3d(1);
+        Y = pt3d(2);
+        Z = pt3d(3);
+        W = pt3d(4);
+        x = abs(X/W);
+        y = abs(Y/W);
+        z = abs(Z/W);
+        max_val = max([x,y,z]);
+        if max_val < 250
+            threeDpts = [threeDpts;[X,Y,Z,W]];
+        end
     end
-    point3d = A\b;
-    whos point3d;
-    X = point3d(1);
-    Y = point3d(2);
-    Z = point3d(3);
-    W = point3d(4);
 end

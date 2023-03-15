@@ -1,12 +1,12 @@
 set1files = {'data\DSCF4177.jpg', 'data\DSCF4178.jpg', 'data\DSCF4179.jpg',...
-             'data\DSCF4180.jpg', 'data\DSCF4181.jpg'};
+             'data\DSCF4180.jpg'};
 set1fileMasks = {'data\DSCF4177Mask.jpg', 'data\DSCF4178Mask.jpg', 'data\DSCF4179Mask.jpg', ...
-                 'data\DSCF4197Mask.jpg','data\DSCF4198Mask.jpg'};
+                 'data\DSCF4180Mask.jpg'};
 
 set2files = {'data\DSCF4195.jpg', 'data\DSCF4196.jpg', 'data\DSCF4197.jpg',...
-              'data\DSCF4198.jpg', 'data\DSCF4199.jpg'};
+              'data\DSCF4198.jpg'};
 set2fileMasks = {'data\DSCF4195Mask.jpg', 'data\DSCF4196Mask.jpg', 'data\DSCF4197Mask.jpg',...
-              'data\DSCF4198Mask.jpg', 'data\DSCF4199Mask.jpg'};
+              'data\DSCF4198Mask.jpg'};
 
 yellow_top_south    = [0,48,67; 32,48,67]; 
 yellow_bottom_south = [0,48,48; 32,48,48];
